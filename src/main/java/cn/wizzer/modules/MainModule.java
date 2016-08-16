@@ -15,7 +15,7 @@ import org.nutz.mvc.ioc.provider.ComboIocProvider;
 @Encoding(input = "UTF-8", output = "UTF-8")
 @Views({ VelocityViewMaker.class})
 //TODO 初始化执行一次即可
-//@SetupBy(value=MainSetup.class)
+@SetupBy(value=MainSetup.class)
 @ChainBy(args="mvc/nutzfw-mvc-chain.js")
 public class MainModule {
 }

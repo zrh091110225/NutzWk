@@ -40,6 +40,7 @@ public class MainSetup implements Setup {
     private static final Log log = Logs.get();
     static DictService dictService = Mvcs.ctx().getDefaultIoc().get(DictService.class);
     static ConfigService configService = Mvcs.ctx().getDefaultIoc().get(ConfigService.class);
+
     public void init(NutConfig config) {
         try {
             Ioc ioc = config.getIoc();
@@ -53,26 +54,19 @@ public class MainSetup implements Setup {
             // 检查一下Ehcache CacheManager 是否正常.
             CacheManager cacheManager = ioc.get(CacheManager.class);
             log.debug("Ehcache CacheManager = " + cacheManager);
-            /* redis测试
-            JedisPool jedisPool = ioc.get(JedisPool.class);
-            try (Jedis jedis = jedisPool.getResource()) {
-                String re = jedis.set("_big_fish", "Hello Word!!");
-                log.debug("1.redis say : " + re);
-                re = jedis.get("_big_fish");
-                log.debug("2.redis say : " + re);
-            } finally {}
-
-            RedisService redis = ioc.get(RedisService.class);
-            redis.set("hi", "wendal,rekoe hoho..");
-            log.debug("redis say again : " + redis.get("hi"));
-            */
+            /*
+             * redis测试 JedisPool jedisPool = ioc.get(JedisPool.class); try (Jedis jedis = jedisPool.getResource()) {
+             * String re = jedis.set("_big_fish", "Hello Word!!"); log.debug("1.redis say : " + re); re =
+             * jedis.get("_big_fish"); log.debug("2.redis say : " + re); } finally {} RedisService redis =
+             * ioc.get(RedisService.class); redis.set("hi", "wendal,rekoe hoho.."); log.debug("redis say again : " +
+             * redis.get("hi"));
+             */
             // 初始化系统变量
             initSysSetting(config, dao);
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
-
 
     /**
      * 初始化数据库
@@ -84,11 +78,11 @@ public class MainSetup implements Setup {
         Daos.createTablesInPackage(dao, "cn.wizzer.modules", true);
         // 若必要的数据表不存在，则初始化数据库
         if (0 == dao.count(Sys_user.class)) {
-            //初始化数据字典表
+            // 初始化数据字典表
             FileSqlManager fm = new FileSqlManager("init_sys_dict.sql");
             List<Sql> sqlList = fm.createCombo(fm.keys());
             dao.execute(sqlList.toArray(new Sql[sqlList.size()]));
-            //初始化配置表
+            // 初始化配置表
             Sys_config conf = new Sys_config();
             conf.setCname("app_name");
             conf.setCvalue("NutzWk 2.0");
@@ -99,7 +93,7 @@ public class MainSetup implements Setup {
             conf2.setCvalue("<a href=\"http://www.wizzer.cn\" target=\"_blank\">Wizzer.cn</a>");
             conf2.setNote("版权信息");
             dao.insert(conf2);
-            //初始化单位
+            // 初始化单位
             Sys_unit unit = new Sys_unit();
             unit.setPath("0001");
             unit.setName("系统管理");
@@ -120,7 +114,7 @@ public class MainSetup implements Setup {
             unit.setEmail("wizzer@qq.com");
             unit.setTelephone("");
             dao.insert(unit);
-            //初始化菜单
+            // 初始化菜单
             List<Sys_menu> menuList = new ArrayList<Sys_menu>();
             Sys_menu menu = new Sys_menu();
             menu.setEnabled(true);
@@ -277,7 +271,7 @@ public class MainSetup implements Setup {
             menu.setParentId(m1.getId());
             menu.setType("menu");
             Sys_menu m9 = dao.insert(menu);
-            //初始化角色
+            // 初始化角色
             Sys_role role = new Sys_role();
             role.setName("公共角色");
             role.setCode("public");
@@ -297,7 +291,7 @@ public class MainSetup implements Setup {
             role.setMenus(menuList);
             role.setEnabled(true);
             Sys_role dbrole = dao.insert(role);
-            //初始化用户
+            // 初始化用户
             Sys_user user = new Sys_user();
             user.setUsername("superadmin");
             RandomNumberGenerator rng = new SecureRandomNumberGenerator();
@@ -315,24 +309,46 @@ public class MainSetup implements Setup {
             profile.setLinkQq("11624317");
             profile.setUserId(dbuser.getId());
             dao.insert(profile);
-            //不同的插入数据方式(安全)
+            // 不同的插入数据方式(安全)
             dao.insert("sys_user_unit", Chain.make("user_id", dbuser.getId()).add("unit_id", dbunit.getId()));
             dao.insert("sys_user_role", Chain.make("user_id", dbuser.getId()).add("role_id", dbrole.getId()));
-            //执行自定义SQL插入
-            dao.execute(Sqls.create("insert into `sys_role_menu` (`role_id`, `menu_id`) values('" + dbrole.getId() + "','" + m1.getId() + "')"));
-            dao.execute(Sqls.create("insert into `sys_role_menu` (`role_id`, `menu_id`) values('" + dbrole.getId() + "','" + m2.getId() + "')"));
-            dao.execute(Sqls.create("insert into `sys_role_menu` (`role_id`, `menu_id`) values('" + dbrole.getId() + "','" + m3.getId() + "')"));
-            dao.execute(Sqls.create("insert into `sys_role_menu` (`role_id`, `menu_id`) values('" + dbrole.getId() + "','" + m31.getId() + "')"));
-            dao.execute(Sqls.create("insert into `sys_role_menu` (`role_id`, `menu_id`) values('" + dbrole.getId() + "','" + m32.getId() + "')"));
-            dao.execute(Sqls.create("insert into `sys_role_menu` (`role_id`, `menu_id`) values('" + dbrole.getId() + "','" + m33.getId() + "')"));
-            dao.execute(Sqls.create("insert into `sys_role_menu` (`role_id`, `menu_id`) values('" + dbrole.getId() + "','" + m34.getId() + "')"));
-            dao.execute(Sqls.create("insert into `sys_role_menu` (`role_id`, `menu_id`) values('" + dbrole.getId() + "','" + m4.getId() + "')"));
-            dao.execute(Sqls.create("insert into `sys_role_menu` (`role_id`, `menu_id`) values('" + dbrole.getId() + "','" + m5.getId() + "')"));
-            dao.execute(Sqls.create("insert into `sys_role_menu` (`role_id`, `menu_id`) values('" + dbrole.getId() + "','" + m6.getId() + "')"));
-            dao.execute(Sqls.create("insert into `sys_role_menu` (`role_id`, `menu_id`) values('" + dbrole.getId() + "','" + m7.getId() + "')"));
-            //另外一种写法(安全)
-            dao.execute(Sqls.create("insert into `sys_role_menu` (`role_id`, `menu_id`) values(@a,@b)").setParam("a", dbrole.getId()).setParam("b", m8.getId()));
-            dao.execute(Sqls.create("insert into `sys_role_menu` (`role_id`, `menu_id`) values(@a,@b)").setParam("a", dbrole.getId()).setParam("b", m9.getId()));
+            // 执行自定义SQL插入
+            dao.execute(Sqls.create("insert into `sys_role_menu` (`role_id`, `menu_id`) values('" + dbrole.getId()
+                    + "','" + m1.getId() + "')"));
+            dao.execute(Sqls.create("insert into `sys_role_menu` (`role_id`, `menu_id`) values('" + dbrole.getId()
+                    + "','" + m2.getId() + "')"));
+            dao.execute(Sqls.create("insert into `sys_role_menu` (`role_id`, `menu_id`) values('" + dbrole.getId()
+                    + "','" + m3.getId() + "')"));
+            dao.execute(Sqls.create("insert into `sys_role_menu` (`role_id`, `menu_id`) values('" + dbrole.getId()
+                    + "','" + m31.getId() + "')"));
+            dao.execute(Sqls.create("insert into `sys_role_menu` (`role_id`, `menu_id`) values('" + dbrole.getId()
+                    + "','" + m32.getId() + "')"));
+            dao.execute(Sqls.create("insert into `sys_role_menu` (`role_id`, `menu_id`) values('" + dbrole.getId()
+                    + "','" + m33.getId() + "')"));
+            dao.execute(Sqls.create("insert into `sys_role_menu` (`role_id`, `menu_id`) values('" + dbrole.getId()
+                    + "','" + m34.getId() + "')"));
+            dao.execute(Sqls.create("insert into `sys_role_menu` (`role_id`, `menu_id`) values('" + dbrole.getId()
+                    + "','" + m4.getId() + "')"));
+            dao.execute(Sqls.create("insert into `sys_role_menu` (`role_id`, `menu_id`) values('" + dbrole.getId()
+                    + "','" + m5.getId() + "')"));
+            dao.execute(Sqls.create("insert into `sys_role_menu` (`role_id`, `menu_id`) values('" + dbrole.getId()
+                    + "','" + m6.getId() + "')"));
+            dao.execute(Sqls.create("insert into `sys_role_menu` (`role_id`, `menu_id`) values('" + dbrole.getId()
+                    + "','" + m7.getId() + "')"));
+            // 另外一种写法(安全)
+            dao.execute(Sqls.create("insert into `sys_role_menu` (`role_id`, `menu_id`) values(@a,@b)")
+                    .setParam("a", dbrole.getId()).setParam("b", m8.getId()));
+            dao.execute(Sqls.create("insert into `sys_role_menu` (`role_id`, `menu_id`) values(@a,@b)")
+                    .setParam("a", dbrole.getId()).setParam("b", m9.getId()));
+
+            // 初始化配置项数据
+            dao.execute(Sqls
+                    .create("INSERT INTO `dict_config` (`code`, `name`, `key`, `value`, `note`) VALUES (@a,@b,@c,@d,@e)")//
+                    .setParam("a", "common")//
+                    .setParam("b", "常规配置")//
+                    .setParam("c", "order.platform")//
+                    .setParam("d", "iPhone;iPad;AndroidPhone;Touch;WindowsPhone;wap;QtMeeGo;iPhone-pro;touch-pad;LBS")//
+                    .setParam("e", "平台配置"));
 
         }
     }
