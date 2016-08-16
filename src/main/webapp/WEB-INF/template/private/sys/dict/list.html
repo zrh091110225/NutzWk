@@ -1,0 +1,14 @@
+#foreach($!o in $obj.list)
+<tr id="$!o.id" >
+    <td><span class="pd-l-sm"></span>$!o.dkey</a></td>
+    <td>$!o.dval</td>
+    <td>$!o.txt</td>
+    <td>$!o.status</td>
+    <td>$!o.location</td>
+    <td>$!date.formatDateTime($o.create_time)</td>
+</tr>
+#end
+<input id="totalCount$!tableId" type="hidden" value="$!obj.totalCount">
+<input id="totalPage$!tableId" type="hidden" value="$!obj.totalPage">
+<input id="pageNo$!tableId" type="hidden" value="$!obj.pageNo">
+<input id="pageSize$!tableId" type="hidden" value="$!obj.pageSize">
