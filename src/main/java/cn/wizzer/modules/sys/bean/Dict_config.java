@@ -2,23 +2,30 @@ package cn.wizzer.modules.sys.bean;
 
 import org.nutz.dao.entity.annotation.*;
 
+import java.io.Serializable;
+
 /**
  * Created by ronghaizheng on 16/8/16.
  */
 @Table("dict_config")
-public class Dict_config {
+public class Dict_config implements Serializable {
     @Column
-    @Name
+    @Id
     private int id;
-    @ColDefine(type = ColType.VARCHAR, width = 100)
+    @Column("`code`")
+    @ColDefine(type = ColType.VARCHAR, width = 100, notNull = true)
     private String code;// 配置代码
-    @ColDefine(type = ColType.VARCHAR, width = 100)
+    @Column("`name`")
+    @ColDefine(type = ColType.VARCHAR, width = 100, notNull = true)
     private String name;// 配置名称
-    @ColDefine(type = ColType.VARCHAR, width = 100)
+    @Column("`key`")
+    @ColDefine(type = ColType.VARCHAR, width = 100, notNull = true)
     private String key;// 配置项key
-    @ColDefine(type = ColType.TEXT)
+    @Column("`value`")
+    @ColDefine(type = ColType.TEXT, notNull = true)
     private String value;// 配置项value
-    @ColDefine(type = ColType.VARCHAR, width = 200)
+    @Column("`note`")
+    @ColDefine(type = ColType.VARCHAR, width = 200, notNull = true)
     private String note;// 配置项说明
 
     public String getValue() {
