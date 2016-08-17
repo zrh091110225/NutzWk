@@ -1,5 +1,10 @@
+<%
+    String path = request.getContextPath();
+    String basePath = request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort() + path + "/";
+    String url = basePath + "private/index";
+%>
 <html>
-<body>
-<h2>Hello World!</h2>
-</body>
+<head>
+    <meta http-equiv=refresh content=0;url=<%=url %>>
+</head>
 </html>
