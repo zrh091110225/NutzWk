@@ -14,7 +14,6 @@ import org.nutz.mvc.ioc.provider.ComboIocProvider;
 @Localization(value="msg/", defaultLocalizationKey="zh_CN")
 @Encoding(input = "UTF-8", output = "UTF-8")
 @Views({ VelocityViewMaker.class})
-//TODO 初始化执行一次即可
 @SetupBy(value=MainSetup.class)
 @ChainBy(args="mvc/nutzfw-mvc-chain.js")
 public class MainModule {
