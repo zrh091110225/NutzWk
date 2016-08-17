@@ -6,6 +6,7 @@ import cn.wizzer.modules.sys.bean.*;
 import cn.wizzer.common.mvc.config.Globals;
 import cn.wizzer.modules.sys.service.DictService;
 import net.sf.ehcache.CacheManager;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.crypto.RandomNumberGenerator;
 import org.apache.shiro.crypto.SecureRandomNumberGenerator;
 import org.apache.shiro.crypto.hash.Sha256Hash;
@@ -71,9 +72,7 @@ public class MainSetup implements Setup {
         // 若必要的数据表不存在，则初始化数据库
         if (0 == dao.count(Sys_user.class)) {
             //初始化数据字典表
-            FileSqlManager fm = new FileSqlManager("init_sys_dict.sql");
-            List<Sql> sqlList = fm.createCombo(fm.keys());
-            dao.execute(sqlList.toArray(new Sql[sqlList.size()]));
+            initDBFromFile(dao,"init_sys_dict.sql");
             //初始化配置表
             Sys_config conf = new Sys_config();
             conf.setCname("app_name");
@@ -342,7 +341,21 @@ public class MainSetup implements Setup {
                     .setParam("d","iPhone;iPad;AndroidPhone;Touch;WindowsPhone;wap;QtMeeGo;iPhone-pro;touch-pad;LBS")//
                     .setParam("e","平台配置"));
 
+            //初始化数据字典表
+            initDBFromFile(dao,"init_dict_config.sql");
+
         }
+    }
+
+    private void initDBFromFile(Dao dao, String initFileName) {
+        if (StringUtils.isBlank(initFileName)){
+            log.warn("输入的初始化文件名为空！");
+            return;
+        }
+
+        FileSqlManager fm = new FileSqlManager(initFileName);
+        List<Sql> sqlList = fm.createCombo(fm.keys());
+        dao.execute(sqlList.toArray(new Sql[sqlList.size()]));
     }
 
     /**
