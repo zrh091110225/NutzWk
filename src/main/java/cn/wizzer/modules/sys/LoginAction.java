@@ -146,7 +146,7 @@ public class LoginAction {
                 return user.getProfile().getAvatar();
             }
         }
-        return new File(req.getServletContext().getRealPath("/include/img/man.png"));
+        return new File(req.getSession().getServletContext().getRealPath("/include/img/man.png"));
     }
 
     /**
